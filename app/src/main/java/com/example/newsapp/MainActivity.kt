@@ -38,6 +38,10 @@ class MainActivity : AppCompatActivity() {
             try {
                 val connection = URL(url).openConnection() as HttpURLConnection
                 connection.requestMethod = "GET"
+                connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36")
+                connection.setRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8")
+                connection.setRequestProperty("Accept-Language", "en-US,en;q=0.5")
+                connection.setRequestProperty("Referer", "https://newsapi.org/")
                 connection.connectTimeout = 5000
                 connection.readTimeout = 5000
 
@@ -53,13 +57,14 @@ class MainActivity : AppCompatActivity() {
                     val apiResponse: NewsApiResponse = Gson().fromJson(response, responseType)
 
                     // Get the list of articles
-                    val newsList = apiResponse.articles.take(4) // Limit to first 4 items
+                    val newsList = apiResponse.articles.take(6) // Limit to first 4 items
 
                     runOnUiThread {
                         adapter.updateData(newsList.map { it.title })
                     }
                 } else {
-                    Log.e("API Error", "Response code: $responseCode")
+                    val errorResponse = connection.errorStream?.bufferedReader()?.use { it.readText() }
+                    Log.e("API Error", "Response code: $responseCode, Error message: $errorResponse")
                 }
             } catch (e: Exception) {
                 Log.e("Network Error", "Error fetching news: ${e.message}")
