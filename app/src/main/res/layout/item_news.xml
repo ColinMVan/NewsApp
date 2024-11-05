@@ -8,5 +8,6 @@
         android:id="@+id/titleTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:padding="16dp"
         android:textSize="16sp"/>
 </LinearLayout>

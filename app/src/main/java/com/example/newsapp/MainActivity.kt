@@ -1,18 +1,8 @@
 package com.example.newsapp
 
-import android.content.Intent
 import android.os.Bundle
-import android.os.StrictMode
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.webkit.WebView
-import android.widget.TextView
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
@@ -22,9 +12,8 @@ import java.net.URL
 
 class MainActivity : AppCompatActivity() {
 
-//    7ef64e41e1bf4199907937caf03db3f3
-private lateinit var recyclerView: RecyclerView
-private lateinit var adapter: NewsAdapter
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var adapter: NewsAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,41 +22,56 @@ private lateinit var adapter: NewsAdapter
         recyclerView = findViewById(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        // Allow network on main thread (for testing only, not recommended for production)
+        // Initialize the adapter with an empty list
+        adapter = NewsAdapter(emptyList()) // Start with empty list
+        recyclerView.adapter = adapter
+
+        // Fetch news headlines
         fetchNewsHeadlines()
     }
 
     private fun fetchNewsHeadlines() {
-        val url = "https://newsapi.org/v2/top-headlines?country=us&apiKey=7ef64e41e1bf4199907937caf03db3f3"
+        val url = "https://newsapi.org/v2/top-headlines?country=us&apiKey=7ef64e41e1bf4199907937caf03db3f3" // Replace with your API key
 
-        val newsList: List<NewsItem> = try {
-            val connection = URL(url).openConnection() as HttpURLConnection
-            connection.requestMethod = "GET"
-            connection.connectTimeout = 5000
-            connection.readTimeout = 5000
+        // Fetching the news in a background thread
+        Thread {
+            try {
+                val connection = URL(url).openConnection() as HttpURLConnection
+                connection.requestMethod = "GET"
+                connection.connectTimeout = 5000
+                connection.readTimeout = 5000
 
-            if (connection.responseCode == HttpURLConnection.HTTP_OK) {
-                val response = connection.inputStream.bufferedReader().use { it.readText() }
-                connection.disconnect()
-                Log.d("API Response", response) // Log response to check the data
+                val responseCode = connection.responseCode
+                Log.d("API Response Code", responseCode.toString()) // Log the response code
 
-                // Parse JSON and extract articles
-                val responseType = object : TypeToken<NewsApiResponse>() {}.type
-                Gson().fromJson<NewsApiResponse>(response, responseType).articles
-            } else {
-                emptyList()
+                if (responseCode == HttpURLConnection.HTTP_OK) {
+                    val response = connection.inputStream.bufferedReader().use { it.readText() }
+                    Log.d("API Response", response) // Log the response
+
+                    // Parse JSON response
+                    val responseType = object : TypeToken<NewsApiResponse>() {}.type
+                    val apiResponse: NewsApiResponse = Gson().fromJson(response, responseType)
+
+                    // Get the list of articles
+                    val newsList = apiResponse.articles.take(4) // Limit to first 4 items
+
+                    runOnUiThread {
+                        adapter.updateData(newsList.map { it.title })
+                    }
+                } else {
+                    Log.e("API Error", "Response code: $responseCode")
+                }
+            } catch (e: Exception) {
+                Log.e("Network Error", "Error fetching news: ${e.message}")
+                e.printStackTrace()
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            emptyList()
-        }
-
-        // Set adapter with data
-        adapter = NewsAdapter(newsList)
-        recyclerView.adapter = adapter
+        }.start()
     }
 
-    data class NewsApiResponse(val articles: List<NewsItem>)
-    data class NewsItem(val title: String)
-
+    // Data classes for parsing the API response
+    data class NewsApiResponse(val status: String, val totalResults: Int, val articles: List<NewsItem>)
+    data class NewsItem(val source: Source, val author: String?, val title: String, val description: String?,
+                        val url: String, val urlToImage: String?, val publishedAt: String?, val content: String?) {
+        data class Source(val id: String?, val name: String)
+    }
 }

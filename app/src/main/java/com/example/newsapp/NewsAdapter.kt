@@ -6,8 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class NewsAdapter(private val newsList: List<MainActivity.NewsItem>) :
-    RecyclerView.Adapter<NewsAdapter.NewsViewHolder>() {
+class NewsAdapter(private var newsTitles: List<String>) : RecyclerView.Adapter<NewsAdapter.NewsViewHolder>() {
 
     inner class NewsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val titleTextView: TextView = itemView.findViewById(R.id.titleTextView)
@@ -19,8 +18,16 @@ class NewsAdapter(private val newsList: List<MainActivity.NewsItem>) :
     }
 
     override fun onBindViewHolder(holder: NewsViewHolder, position: Int) {
-        holder.titleTextView.text = newsList[position].title
+        val title = newsTitles[position]
+        holder.titleTextView.text = title
     }
 
-    override fun getItemCount() = newsList.size
+    override fun getItemCount() = newsTitles.size
+
+    // Method to update the data and notify the RecyclerView
+    fun updateData(newTitles: List<String>) {
+        newsTitles = newTitles
+        notifyDataSetChanged() // Notify that data has changed
+    }
 }
+
