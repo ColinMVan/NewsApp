@@ -30,4 +30,3 @@ class NewsAdapter(private var newsTitles: List<String>) : RecyclerView.Adapter<N
         notifyDataSetChanged() // Notify that data has changed
     }
 }
-
