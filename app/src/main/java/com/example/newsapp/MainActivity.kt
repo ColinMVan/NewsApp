@@ -136,11 +136,16 @@ class MainActivity : AppCompatActivity() {
         val titleTextView = findViewById<TextView>(R.id.textView)
         val imageView = findViewById<ImageView>(R.id.imageView)
 
-        if (titleTextView != null && imageView != null) {
-            titleTextView.text = article.content
-            article.urlToImage?.let { Picasso.get().load(article.urlToImage).into(imageView)      }
-        } else {
-            Log.e("MainActivity", "Title text view or image view giving null")
+        runOnUiThread {
+            if (titleTextView != null && imageView != null) {
+                titleTextView.text = article.content
+                val url = article.urlToImage
+                article.urlToImage?.let {
+                    Picasso.get().load(url).into(imageView)      }
+            } else {
+                Log.e("MainActivity", "Title text view or image view giving null")
+            }
+
         }
     }
 
