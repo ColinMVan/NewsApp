@@ -10,24 +10,26 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="365dp"
-        android:layout_height="245dp"
+        android:layout_width="335dp"
+        android:layout_height="203dp"
         android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="25dp"
-        android:layout_marginBottom="485dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="67dp"
+        android:layout_marginEnd="47dp"
+        android:layout_marginBottom="461dp"
         tools:srcCompat="@tools:sample/avatars" />
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="match_parent"
-        android:layout_height="457dp"
+        android:layout_height="292dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginTop="272dp"
-        android:layout_marginBottom="1dp" />
+        android:layout_marginTop="433dp"
+        android:layout_marginBottom="6dp" />
 
 
 </RelativeLayout>
