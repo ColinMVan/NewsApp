@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 
 class NewsAdapter(private var newsTitles: List<String>) : RecyclerView.Adapter<NewsAdapter.NewsViewHolder>() {
 
+
     inner class NewsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val titleTextView: TextView = itemView.findViewById(R.id.titleTextView)
     }
