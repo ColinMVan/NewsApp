@@ -44,7 +44,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun fetchNewsHeadlines() {
-        val url = "https://newsapi.org/v2/everything?q=NBA-AND-WNBA-AND-NFL&apiKey=7ef64e41e1bf4199907937caf03db3f3" // Replace with your API key
+        val url = "https://newsapi.org/v2/everything?q=NBA-AND-NFL-AND-WNBA&apiKey=7ef64e41e1bf4199907937caf03db3f3" // Replace with your API key
 
         // Use Cronet to make a request
         // Build and start a Cronet request
@@ -128,7 +128,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun displayArticleContent(content: String, image: Bitmap?) {
-        findViewById<TextView>(R.id.titleTextView).text = content
+        findViewById<TextView>(R.id.textView).text = content
         findViewById<ImageView>(R.id.imageView).setImageBitmap(image)
     }
 
@@ -152,6 +152,7 @@ class MainActivity : AppCompatActivity() {
 
     inner class MyUrlRequestCallback(private val callback: (String?) -> Unit) : UrlRequest.Callback() {
         private val myBuffer: ByteBuffer = ByteBuffer.allocateDirect(102400)
+        private val responseBuilder = StringBuilder()
 
         override fun onRedirectReceived(request: UrlRequest?, info: UrlResponseInfo?, newLocationUrl: String?) {
             request?.followRedirect()
@@ -168,10 +169,14 @@ class MainActivity : AppCompatActivity() {
                 it.get(byteArray)
                 String(byteArray)
             }
-            callback(response)
+            responseBuilder.append(response)
+            myBuffer.clear()
+            request?.read(myBuffer)
+//            callback(response)
         }
 
         override fun onSucceeded(request: UrlRequest?, info: UrlResponseInfo?) {
+            callback(responseBuilder.toString())
             Log.d("MyUrlRequestCallback", "Request succeeded")
         }
 
