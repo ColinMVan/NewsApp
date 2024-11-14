@@ -31,12 +31,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        recyclerView = findViewById(R.id.recyclerView)
-        recyclerView.layoutManager = LinearLayoutManager(this)
 
         // Initialize the adapter with an empty list
         adapter = NewsAdapter(emptyList()) // Start with empty list
-        recyclerView.adapter = adapter
 
         // Cronet Engine Initialization
         cronetEngine = CronetEngine.Builder(this).build()
@@ -47,7 +44,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun fetchNewsHeadlines() {
-        val url = "https://newsapi.org/v2/top-headlines?country=us&apiKey=7ef64e41e1bf4199907937caf03db3f3" // Replace with your API key
+        val url = "https://newsapi.org/v2/everything?q=NBA-AND-WNBA-AND-NFL&apiKey=7ef64e41e1bf4199907937caf03db3f3" // Replace with your API key
 
         // Use Cronet to make a request
         // Build and start a Cronet request
@@ -136,9 +133,15 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun displayArticle(article: NewsItem) {
-        findViewById<TextView>(R.id.titleTextView).text = article.content
-        val imageView: ImageView = findViewById(R.id.imageView)
-        article.urlToImage?.let { Picasso.get().load(article.urlToImage).into(imageView)      }
+        val titleTextView = findViewById<TextView>(R.id.textView)
+        val imageView = findViewById<ImageView>(R.id.imageView)
+
+        if (titleTextView != null && imageView != null) {
+            titleTextView.text = article.content
+            article.urlToImage?.let { Picasso.get().load(article.urlToImage).into(imageView)      }
+        } else {
+            Log.e("MainActivity", "Title text view or image view giving null")
+        }
     }
 
     data class NewsApiResponse(val status: String, val totalResults: Int, val articles: List<NewsItem>)
