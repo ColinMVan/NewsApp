@@ -27,6 +27,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var adapter: NewsAdapter
     private lateinit var cronetEngine:CronetEngine
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
