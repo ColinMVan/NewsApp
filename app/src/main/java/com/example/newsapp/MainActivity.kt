@@ -137,7 +137,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun displayArticle(article: NewsItem) {
         findViewById<TextView>(R.id.titleTextView).text = article.content
-        article.urlToImage?.let { Picasso.get().load(article.urlToImage).into(findViewById(R.id.imageView))      }
+        val imageView: ImageView = findViewById(R.id.imageView)
+        article.urlToImage?.let { Picasso.get().load(article.urlToImage).into(imageView)      }
     }
 
     data class NewsApiResponse(val status: String, val totalResults: Int, val articles: List<NewsItem>)
